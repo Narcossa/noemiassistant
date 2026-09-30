@@ -28,7 +28,11 @@ jobs:
       - name: Manual Xcode Build
         run: |
           cd ios
-          xcodebuild build -workspace Runner.xcworkspace -scheme Runner -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" EXPANDED_CODE_SIGN_IDENTITY=""
+          echo "Starting xcodebuild..."
+          xcodebuild build -workspace Runner.xcworkspace -scheme Runner -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" EXPANDED_CODE_SIGN_IDENTITY="" > xcodebuild.log 2>&1 || true
+          echo "xcodebuild finished. Extracting errors:"
+          grep -A 2 -B 2 -i "error:" xcodebuild.log || echo "No errors found in log."
+          if grep -q -i "error:" xcodebuild.log; then exit 1; fi
 
       - name: Compress Payload to IPA
         run: |
