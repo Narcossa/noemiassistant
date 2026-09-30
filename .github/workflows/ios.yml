@@ -1,0 +1,38 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build unsigned IPA
+        run: flutter build ipa --no-codesign
+
+      - name: Compress Payload to IPA
+        run: |
+          cd build/ios/archive/Runner.xcarchive/Products/Applications
+          mkdir Payload
+          mv Runner.app Payload/
+          zip -qr noemiassistant.ipa Payload
+          
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoemiAssistant-IPA
+          path: build/ios/archive/Runner.xcarchive/Products/Applications/noemiassistant.ipa
