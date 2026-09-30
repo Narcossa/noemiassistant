@@ -21,20 +21,25 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build unsigned iOS App
-        run: flutter build ios --release --no-codesign
+      - name: Build Flutter assets and App.framework
+        run: flutter build ios --release --no-codesign || echo "Ignoring Flutter CLI signing error..."
         continue-on-error: true
+
+      - name: Manual Xcode Build
+        run: |
+          cd ios
+          xcodebuild build -workspace Runner.xcworkspace -scheme Runner -configuration Release -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" EXPANDED_CODE_SIGN_IDENTITY=""
 
       - name: Compress Payload to IPA
         run: |
-          APP_PATH=$(find build -name "Runner.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "Runner.app not found in build directory!"
+          APP_PATH=$(find build -name "Runner.app" -type d | grep "Release-iphoneos" | head -n 1)
+          echo "Found Runner.app at $APP_PATH"
+          if [ ! -f "$APP_PATH/Runner" ]; then
+            echo "Executable missing!"
             exit 1
           fi
-          echo "Found Runner.app at $APP_PATH"
           mkdir -p Payload
-          mv "$APP_PATH" Payload/
+          cp -r "$APP_PATH" Payload/
           zip -qr noemiassistant.ipa Payload
           
       - name: Upload IPA Artifact
