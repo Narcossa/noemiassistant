@@ -22,7 +22,7 @@ dependencies:
   googleapis_auth: ^1.6.0
   flutter_tts: ^4.0.2
   speech_to_text: ^6.6.1
-  video_player: ^2.14.0
+  video_player: ^2.9.5
 
 dev_dependencies:
   flutter_test:
