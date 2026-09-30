@@ -20,7 +20,9 @@ class GoogleAuthClient extends http.BaseClient {
 
 class GoogleAuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: kIsWeb ? '257305674390-ustnsknbla480b54g5qae9ras7afs700.apps.googleusercontent.com' : null,
+    clientId: kIsWeb 
+        ? '257305674390-ustnsknbla480b54g5qae9ras7afs700.apps.googleusercontent.com' 
+        : '257305674390-9tibj31i222053hamcbs19nk09va3mg5.apps.googleusercontent.com',
     scopes: [
       calendar.CalendarApi.calendarScope,
       calendar.CalendarApi.calendarEventsScope,
