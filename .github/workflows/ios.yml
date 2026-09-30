@@ -22,20 +22,11 @@ jobs:
         run: flutter pub get
 
       - name: Build unsigned iOS App
-        run: flutter build ios --release --no-codesign || echo "Ignoring Flutter CLI signing error..."
+        run: flutter build ios --release --no-codesign
+        continue-on-error: true
 
       - name: Compress Payload to IPA
         run: |
-          echo "Checking if Runner.app was built..."
-          ls -la build/ios/iphoneos/ || echo "iphoneos dir not found"
-          
-          if [ ! -d "build/ios/iphoneos/Runner.app" ]; then
-            echo "Runner.app not found! Attempting manual xcodebuild..."
-            cd ios
-            xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" || true
-            cd ..
-          fi
-          
           cd build/ios/iphoneos
           mkdir -p Payload
           mv Runner.app Payload/
