@@ -21,12 +21,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build unsigned IPA
-        run: flutter build ipa --no-codesign
+      - name: Build unsigned iOS App
+        run: flutter build ios --release --no-codesign
 
       - name: Compress Payload to IPA
         run: |
-          cd build/ios/archive/Runner.xcarchive/Products/Applications
+          cd build/ios/iphoneos
           mkdir Payload
           mv Runner.app Payload/
           zip -qr noemiassistant.ipa Payload
@@ -35,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NoemiAssistant-IPA
-          path: build/ios/archive/Runner.xcarchive/Products/Applications/noemiassistant.ipa
+          path: build/ios/iphoneos/noemiassistant.ipa
