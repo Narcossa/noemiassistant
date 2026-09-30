@@ -27,13 +27,18 @@ jobs:
 
       - name: Compress Payload to IPA
         run: |
-          cd build/ios/iphoneos
+          APP_PATH=$(find build -name "Runner.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Runner.app not found in build directory!"
+            exit 1
+          fi
+          echo "Found Runner.app at $APP_PATH"
           mkdir -p Payload
-          mv Runner.app Payload/
+          mv "$APP_PATH" Payload/
           zip -qr noemiassistant.ipa Payload
           
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: NoemiAssistant-IPA
-          path: build/ios/iphoneos/noemiassistant.ipa
+          path: noemiassistant.ipa
