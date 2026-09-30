@@ -25,6 +25,11 @@ jobs:
         run: flutter build ios --release --no-codesign || echo "Ignoring Flutter CLI signing error..."
         continue-on-error: true
 
+      - name: Force Pods iOS Deployment Target
+        run: |
+          cd ios
+          find Pods -name "project.pbxproj" -exec sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/g' {} + || true
+
       - name: Manual Xcode Build
         run: |
           cd ios
